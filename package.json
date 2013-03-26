@@ -15,7 +15,8 @@
   "dependencies": {
     "shoe": "~0.0.10",
     "shux": "~0.1.0",
-    "ecstatic": "~0.4.1"
+    "ecstatic": "~0.4.1",
+    "optimist": "~0.3.5"
   },
   "devDependencies": {
     "browserify": "~2.8.0",
@@ -25,9 +26,9 @@
     "prepublish": "browserify browser/main.js -o static/bundle.js"
   },
   "license": "MIT",
-  "author" : {
-      "name" : "James Halliday",
-      "email" : "mail@substack.net",
-      "url" : "http://substack.net"
+  "author": {
+    "name": "James Halliday",
+    "email": "mail@substack.net",
+    "url": "http://substack.net"
   }
 }
