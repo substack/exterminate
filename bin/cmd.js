@@ -23,7 +23,8 @@ sock.install(server, '/sock');
 server.on('listening', function () {
     var port = server.address().port;
     if (opts.app !== false) {
-        spawn('google-chrome', [ '--app=http://localhost:' + port ]);
+        var appPath = (typeof opts.app == 'string' && opts.app !== '') ? opts.app : 'google-chrome';
+        spawn(appPath, [ '--app=http://localhost:' + port ]);
     }
 });
 
