@@ -4,7 +4,9 @@ var shoe = require('shoe');
 var http = require('http');
 var shux = require('shux')();
 var spawn = require('child_process').spawn;
-var opts  = require('optimist').argv;
+var opts = require('optimist').argv;
+var os = require('os');
+var path = require('path');
 
 var ecstatic = require('ecstatic')(__dirname + '/../static');
 var server = http.createServer(function (req, res) {
@@ -22,12 +24,20 @@ sock.install(server, '/sock');
 
 server.on('listening', function () {
     var port = server.address().port;
-    if (opts.app !== false) {
-        var appPath = (typeof opts.app == 'string' && opts.app !== '')
-            ? opts.app
-            : 'google-chrome'
-        ;
-        spawn(appPath, [ '--app=http://localhost:' + port ]);
+
+    var appPath = 'google-chrome';
+    var args = [ '--app=http://localhost:' + port ];
+
+    if(os.platform() === 'darwin') {
+        var userDataDir = path.join(process.env.HOME, '.exterminate')
+        appPath = '/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome';
+        args.push('--user-data-dir=' + userDataDir);
+    }
+
+    if(opts.app !== false) {
+        spawn(appPath, args)
+        .stderr.pipe(process.stderr)
+
     }
 });
 
