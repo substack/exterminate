@@ -8,6 +8,8 @@ var argv = require('optimist').argv;
 var os = require('os');
 var path = require('path');
 
+if (argv.port && argv.app === undefined) argv.app = false;
+
 var ecstatic = require('ecstatic')(__dirname + '/../static');
 var server = http.createServer(function (req, res) {
     if (req.url === '/shell') {
@@ -24,10 +26,18 @@ var sock = shoe(function (stream) {
     if (!argv.port && Object.keys(shux.shells).length > 0) {
         return stream.end('shell already opened');
     }
-    stream.pipe(shux.createShell()).pipe(stream);
+    var sh = shux.createShell();
+    if (ps) {
+        sh.on('end', function () {
+            ps.kill();
+            setTimeout(function () { process.exit() }, 100);
+        });
+    }
+    stream.pipe(sh).pipe(stream);
 });
 sock.install(server, '/sock');
 
+var ps;
 server.on('listening', function () {
     var port = server.address().port;
     
@@ -41,7 +51,7 @@ server.on('listening', function () {
     }
     
     if (argv.app !== false) {
-        var ps = spawn(bin, args).stderr.pipe(process.stderr);
+        ps = spawn(bin, args);
+        ps.stderr.pipe(process.stderr);
     }
 });
-

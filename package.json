@@ -14,7 +14,7 @@
   ],
   "dependencies": {
     "shoe": "~0.0.10",
-    "shux": "~0.1.1",
+    "shux": "~0.1.3",
     "ecstatic": "~0.4.1",
     "optimist": "~0.3.5"
   },
