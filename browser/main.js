@@ -8,3 +8,9 @@ stream.on('end', function () {
 term.pipe(stream).pipe(term);
 term.appendTo(document.body);
 term.listenTo(document);
+
+function resize () {
+    term.resize(window.innerWidth - 5, window.innerHeight - 2);
+}
+resize();
+window.addEventListener('resize', resize);
