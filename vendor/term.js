@@ -2470,6 +2470,12 @@ Terminal.prototype.eraseInDisplay = function(params) {
       ; // no saved lines
       break;
   }
+  this.emit('erase', {
+    0: 'below',
+    1: 'above',
+    2: 'all',
+    3: 'saved'
+  }[params]);
 };
 
 // CSI Ps K  Erase in Line (EL).

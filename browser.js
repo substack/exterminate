@@ -17,6 +17,10 @@ module.exports = function (cols, rows, handler) {
         var h = parseInt(s.height, 10);
         var dy = Math.ceil(h / size.height) + 1;
         term.cursorPos([ term.y + dy, 0 ]);
+        
+        term.once('erase', function (w) {
+            if (w === 'all') target.removeChild(div);
+        });
     });
     
     var tr = through(function (buf) {
