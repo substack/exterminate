@@ -10,6 +10,13 @@ module.exports = function (cols, rows, handler) {
         var div = document.createElement('div');
         div.innerHTML = html;
         target.appendChild(div);
+        div.style.position = 'absolute';
+        div.style.left = term.x * size.width;
+        div.style.top = term.y * size.height + 2;
+        var s = window.getComputedStyle(div);
+        var h = parseInt(s.height, 10);
+        var dy = Math.ceil(h / size.height) + 1;
+        term.cursorPos([ term.y + dy, 0 ]);
     });
     
     var tr = through(function (buf) {
