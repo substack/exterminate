@@ -7,6 +7,18 @@ var spawn = require('child_process').spawn;
 var argv = require('optimist').argv;
 var os = require('os');
 var path = require('path');
+var fs = require('fs');
+
+if (argv._[0] === 'render') {
+    var file = argv._[1];
+    var s = fs.createReadStream(file);
+    process.stdout.write(Buffer([ 0x1b, 0x9f, '^'.charCodeAt(0) ]));
+    s.pipe(process.stdout, { end: false });
+    s.on('end', function () {
+        process.stdout.write(Buffer([ 0x1b, '\\'.charCodeAt(0) ]));
+    });
+    return;
+}
 
 if (argv.port && argv.app === undefined) argv.app = false;
 
