@@ -995,11 +995,13 @@ Terminal.prototype.write = function(data) {
 
           // ESC _ Application Program Command ( APC is 0x9f).
           case '_':
+            this.stateType = 'apc';
             this.state = ignore;
             break;
 
           // ESC ^ Privacy Message ( PM is 0x9e).
           case '^':
+            this.stateType = 'pm';
             this.state = ignore;
             break;
 
@@ -1829,7 +1831,12 @@ Terminal.prototype.write = function(data) {
         // For PM and APC.
         if (ch === '\x1b' || ch === '\x07') {
           if (ch === '\x1b') i++;
+          this.emit(this.stateType, this.stateData || '');
+          this.stateData = '';
           this.state = normal;
+        } else {
+          if (!this.stateData) this.stateData = '';
+          this.stateData += ch;
         }
         break;
     }

@@ -6,6 +6,12 @@ module.exports = function (cols, rows, handler) {
     var term = new Terminal(cols, rows, handler);
     term.open();
     
+    term.on('pm', function (html) {
+        var div = document.createElement('div');
+        div.innerHTML = html;
+        target.appendChild(div);
+    });
+    
     var tr = through(function (buf) {
         term.write(buf);
         drawCursor();
