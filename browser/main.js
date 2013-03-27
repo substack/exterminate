@@ -3,7 +3,6 @@ var term = require('../')(80, 25);
 
 var stream = shoe('/sock');
 stream.on('end', function () {
-    console.log('close!');
     window.close();
 });
 term.pipe(stream).pipe(term);

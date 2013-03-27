@@ -28,6 +28,7 @@ var sock = shoe(function (stream) {
     }
     var sh = shux.createShell();
     if (ps) {
+        stream.on('end', sh.emit.bind(sh, 'end'));
         sh.on('end', function () {
             ps.kill();
             setTimeout(function () { process.exit() }, 100);
