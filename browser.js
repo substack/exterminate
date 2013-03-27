@@ -68,10 +68,10 @@ module.exports = function (cols, rows, handler) {
             cursor = document.createElement('div');
             cursor.style.position = 'absolute';
             cursor.style['background-color'] = 'rgba(255,255,255,0.5)';
-            cursor.style.width = size.width;
-            cursor.style.height = size.height;
             term.element.appendChild(cursor);
         }
+        cursor.style.width = size.width;
+        cursor.style.height = size.height;
         cursor.style.left = term.x * size.width;
         cursor.style.top = term.y * size.height;
     }
