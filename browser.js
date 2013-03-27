@@ -3,19 +3,23 @@ var Terminal = require('./vendor/term.js');
 var charSize = require('char-size');
 
 module.exports = function (cols, rows, handler) {
-    var term = Terminal(cols, rows, handler);
+    var term = new Terminal(cols, rows, handler);
     term.open();
     
-    var tr = through(function (buf) { term.write(buf) });
+    var tr = through(function (buf) {
+        term.write(buf);
+        drawCursor();
+    });
     term.on('key', function (key) { tr.queue(key) });
     
-    var target = null;
+    var target = null, size = null;
     tr.appendTo = function (t) {
         if (typeof t === 'string') {
             t = document.querySelector(t);
         }
         target = t;
         t.appendChild(term.element);
+        term.element.style.position = 'relative';
         tr.emit('target', t);
     };
     
@@ -39,7 +43,8 @@ module.exports = function (cols, rows, handler) {
             });
         }
         
-        var size = charSize(target);
+        size = charSize(target);
+        tr.emit('size', size);
         return tr.geometry(
             Math.floor(width / size.width),
             Math.floor(height / size.height)
@@ -55,6 +60,21 @@ module.exports = function (cols, rows, handler) {
             term.keyPress(ev)
         }, true);
     };
+    
+    var cursor = null;
+    function drawCursor () {
+        if (!size) return tr.once('size', drawCursor);
+        if (!cursor) {
+            cursor = document.createElement('div');
+            cursor.style.position = 'absolute';
+            cursor.style['background-color'] = 'rgba(255,255,255,0.5)';
+            cursor.style.width = size.width;
+            cursor.style.height = size.height;
+            term.element.appendChild(cursor);
+        }
+        cursor.style.left = term.x * size.width;
+        cursor.style.top = term.y * size.height;
+    }
     
     return tr;
 };
