@@ -8,6 +8,8 @@ var argv = require('optimist').argv;
 var os = require('os');
 var path = require('path');
 var fs = require('fs');
+var through = require('through');
+var duplexer = require('duplexer');
 
 if (argv._[0] === 'render') {
     var file = argv._[1];
@@ -20,25 +22,42 @@ if (argv._[0] === 'render') {
     return;
 }
 
+if (argv.viewer && argv.app === undefined) argv.app = true;
 if (argv.port && argv.app === undefined) argv.app = false;
+if (argv.viewer && !argv.address) {
+    argv.address = '0.0.0.0';
+}
 
 var ecstatic = require('ecstatic')(__dirname + '/../static');
 var server = http.createServer(function (req, res) {
     if (req.url === '/shell') {
-        if (!argv.port && Object.keys(shux.shells).length > 0) {
-            return res.end('shell already opened');
-        }
-        req.pipe(shux.createShell()).pipe(res);
+        req.pipe(getShell()).pipe(res);
     }
     else ecstatic(req, res)
 });
-server.listen(argv.port || 0, '127.0.0.1');
+server.listen(argv.port || 0, argv.address || '127.0.0.1');
+
+function getShell () {
+    var hasShells = Object.keys(shux.shells).length > 0;
+    if (argv.viewer && viewShell) {
+        return duplexer(through(), viewShell);
+    }
+    else if (!argv.port && hasShells) {
+        var tr = through();
+        process.nextTick(function () {
+            tr.end('shell already opened');
+        });
+        return tr;
+    }
+    else if (argv.viewer) {
+        viewShell = shux.createShell();
+        return viewShell;
+    }
+    else return shux.createShell();
+}
 
 var sock = shoe(function (stream) {
-    if (!argv.port && Object.keys(shux.shells).length > 0) {
-        return stream.end('shell already opened');
-    }
-    var sh = shux.createShell();
+    var sh = getShell();
     if (ps) {
         stream.on('end', sh.emit.bind(sh, 'end'));
         sh.on('end', function () {
@@ -50,7 +69,7 @@ var sock = shoe(function (stream) {
 });
 sock.install(server, '/sock');
 
-var ps;
+var ps, viewShell;
 server.on('listening', function () {
     var port = server.address().port;
     
