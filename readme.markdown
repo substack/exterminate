@@ -12,6 +12,40 @@ command:
 
 ![exterminate](http://substack.net/images/screenshots/exterminate.png)
 
+You can render any html you want on the terminal! Here's some javascript and
+html that parses the query string and renders it... in comic sans!
+
+``` js
+var qs = require('querystring');
+
+var params = qs.parse(window.location.search.replace(/^\?/, ''));
+var text = document.createTextNode(JSON.stringify(params));
+document.body.appendChild(text);
+```
+
+``` html
+<html>
+<head>
+<style>
+  body {
+    font-family: "Comic Sans MS";
+    color: rgb(100,255,255);
+    font-size: 1.5em;
+  }
+</style>
+</head>
+<body>
+<script src="bundle.js"></script>
+</body>
+</html>
+```
+
+```
+$ browserify main.js > bundle.js
+```
+
+![comic sans in the terminal](http://substack.net/images/screenshots/exterminate_comic_sans.png)
+
 # usage
 
 ```
