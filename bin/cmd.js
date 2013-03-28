@@ -40,7 +40,7 @@ server.listen(argv.port || 0, argv.address || '127.0.0.1');
 function getShell () {
     var hasShells = Object.keys(shux.shells).length > 0;
     if (argv.viewer && viewShell) {
-        return duplexer(through(), viewShell);
+        return duplexer(through(), shux.attach(viewShell.id));
     }
     else if (!argv.port && hasShells) {
         var tr = through();
@@ -82,7 +82,7 @@ server.on('listening', function () {
         args.push('--user-data-dir=' + userDataDir);
     }
     
-    if (argv.app !== false) {
+    if (argv.app !== false && argv.app !== 'false') {
         ps = spawn(bin, args);
         ps.stderr.pipe(process.stderr);
     }
