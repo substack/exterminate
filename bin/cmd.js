@@ -14,24 +14,22 @@ var hyperquest = require('hyperquest');
 var VERSION = require('../package.json').version;
 
 if (argv._[0] === 'render') {
-    var file = argv._[1];
-    var staticDir = require('ecstatic')(process.cwd());
+    var file = path.resolve(argv._[1]);
+    var staticDir = require('ecstatic')(path.dirname(file));
+    
     var server = http.createServer(function (req, res) {
         res.setHeader('exterminate', VERSION);
         staticDir(req, res);
     });
     server.listen(0, function () {
         process.stdout.write(Buffer([ 0x1b, '^'.charCodeAt(0) ]));
-        var href = 'http://localhost:' + server.address().port;
-        process.stdout.write('<base href="/' + href + '/">');
-        
-        var s = fs.createReadStream(file);
-        s.pipe(process.stdout, { end: false });
-        
-        s.on('end', function () {
-            process.stdout.write(Buffer([ 0x1b, '\\'.charCodeAt(0) ]));
-            console.log(href);
-        });
+        var src = 'http://localhost:'
+            + server.address().port
+            + '/' + path.basename(file)
+        ;
+        process.stdout.write('<iframe src="/' + src + '">');
+        process.stdout.write(Buffer([ 0x1b, '\\'.charCodeAt(0) ]));
+        console.log(src);
     });
     return;
 }
