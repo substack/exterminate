@@ -33,8 +33,12 @@ module.exports = function (cols, rows, handler) {
             onload();
         }
         
-        term.once('erase', function (w) {
-            if (w === 'all') term.element.removeChild(div);
+        term.on('erase', function onerase (w) {
+            if (w === 'all') {
+                term.element.removeChild(div);
+                div.removeChild(iframe);
+                term.removeListener('erase', onerase);
+            }
         });
     });
     
