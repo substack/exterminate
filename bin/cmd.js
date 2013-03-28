@@ -10,14 +10,28 @@ var path = require('path');
 var fs = require('fs');
 var through = require('through');
 var duplexer = require('duplexer');
+var hyperquest = require('hyperquest');
+var VERSION = require('../package.json').version;
 
 if (argv._[0] === 'render') {
     var file = argv._[1];
-    var s = fs.createReadStream(file);
-    process.stdout.write(Buffer([ 0x1b, '^'.charCodeAt(0) ]));
-    s.pipe(process.stdout, { end: false });
-    s.on('end', function () {
-        process.stdout.write(Buffer([ 0x1b, '\\'.charCodeAt(0) ]));
+    var staticDir = require('ecstatic')(process.cwd());
+    var server = http.createServer(function (req, res) {
+        res.setHeader('exterminate', VERSION);
+        staticDir(req, res);
+    });
+    server.listen(0, function () {
+        process.stdout.write(Buffer([ 0x1b, '^'.charCodeAt(0) ]));
+        var href = 'http://localhost:' + server.address().port;
+        process.stdout.write('<base href="/' + href + '/">');
+        
+        var s = fs.createReadStream(file);
+        s.pipe(process.stdout, { end: false });
+        
+        s.on('end', function () {
+            process.stdout.write(Buffer([ 0x1b, '\\'.charCodeAt(0) ]));
+            console.log(href);
+        });
     });
     return;
 }
@@ -30,8 +44,26 @@ if (argv.viewer && !argv.address) {
 
 var ecstatic = require('ecstatic')(__dirname + '/../static');
 var server = http.createServer(function (req, res) {
-    if (req.url === '/shell') {
+    if (RegExp('^/shell(/|$)').test(req.url)) {
         req.pipe(getShell()).pipe(res);
+    }
+    else if (RegExp('^/http:').test(req.url)) {
+        var href = req.url.slice(1);
+        var r = hyperquest(req.url.slice(1));
+        r.on('error', function (err) {
+            res.statusCode = 500;
+            res.end(err);
+        });
+        r.on('response', function (resp) {
+            if (!resp.headers.exterminate) {
+                res.statusCode = 401;
+                res.end('not an exterminate server');
+            }
+            else {
+                res.setHeader('content-type', resp.headers['content-type']);
+            }
+        });
+        r.pipe(res);
     }
     else ecstatic(req, res)
 });
