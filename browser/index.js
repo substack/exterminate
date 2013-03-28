@@ -20,10 +20,18 @@ module.exports = function (cols, rows, handler) {
             var dy = 0;
             var onload = function () {
                 var doc = iframe.contentDocument;
-                doc.body.style.margin = '0';
-                if (!doc.body.style.color) doc.body.style.color = 'white';
+                var e = doc.head || doc.documentElement;
+                var styleTag = document.createElement('style');
+                styleTag.appendChild(document.createTextNode(
+                    'body { margin: 0px; color: white }'
+                ));
+                if (e.childNodes.length) {
+                    e.insertBefore(styleTag, e.childNodes[0]);
+                }
+                else e.appendChild(styleTag);
                 
                 var style = window.getComputedStyle(doc.body);
+                
                 iframe.style.height = parseInt(style.height, 10) + 10;
                 dy = parseInt(iframe.style.height, 10) - dy;
                 term.cursorPos([ term.y + Math.ceil(dy / size.height) + 1, 0 ]);
