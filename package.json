@@ -4,7 +4,8 @@
   "description": "",
   "browser": "browser.js",
   "bin": {
-    "exterminate": "bin/cmd.js"
+    "exterminate": "bin/cmd.js",
+    "xtshow": "bin/show.js"
   },
   "keywords": [
     "terminal",

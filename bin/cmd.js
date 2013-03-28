@@ -7,30 +7,13 @@ var spawn = require('child_process').spawn;
 var argv = require('optimist').argv;
 var os = require('os');
 var path = require('path');
-var fs = require('fs');
 var through = require('through');
 var duplexer = require('duplexer');
 var hyperquest = require('hyperquest');
-var VERSION = require('../package.json').version;
 
-if (argv._[0] === 'render') {
-    var file = path.resolve(argv._[1]);
-    var staticDir = require('ecstatic')(path.dirname(file));
-    
-    var server = http.createServer(function (req, res) {
-        res.setHeader('exterminate', VERSION);
-        staticDir(req, res);
-    });
-    server.listen(0, function () {
-        process.stdout.write(Buffer([ 0x1b, '^'.charCodeAt(0) ]));
-        var src = 'http://localhost:'
-            + server.address().port
-            + '/' + path.basename(file)
-        ;
-        process.stdout.write('<iframe src="/' + src + '">');
-        process.stdout.write(Buffer([ 0x1b, '\\'.charCodeAt(0) ]));
-    });
-    return;
+if (argv._[0] === 'show') {
+    var args = [ __dirname + '/show.js' ].concat(process.argv.slice(3));
+    return spawn(process.execPath, args, { stdio: 'inherit' });
 }
 
 if (argv.viewer && argv.app === undefined) argv.app = true;
