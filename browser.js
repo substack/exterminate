@@ -17,17 +17,21 @@ module.exports = function (cols, rows, handler) {
         var iframe = div.querySelector('iframe');
         if (iframe) {
             iframe.style.width = window.innerWidth - 10;
+            var dy = 0;
             var onload = function () {
                 var doc = iframe.contentDocument;
+                doc.body.style.margin = '0';
+                if (!doc.body.style.color) doc.body.style.color = 'white';
+                
                 var style = window.getComputedStyle(doc.body);
-                iframe.style.height = parseInt(style.height, 10) + 5;
+                iframe.style.height = parseInt(style.height, 10) + 10;
+                dy = parseInt(iframe.style.height, 10) - dy;
+                term.cursorPos([ term.y + Math.ceil(dy / size.height) + 1, 0 ]);
+                drawCursor();
             };
             iframe.addEventListener('load', onload);
             onload();
         }
-        var h = parseInt(200, 10);
-        var dy = Math.ceil(h / size.height) + 1;
-        term.cursorPos([ term.y + dy, 0 ]);
         
         term.once('erase', function (w) {
             if (w === 'all') term.element.removeChild(div);

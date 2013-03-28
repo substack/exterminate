@@ -29,7 +29,6 @@ if (argv._[0] === 'render') {
         ;
         process.stdout.write('<iframe src="/' + src + '">');
         process.stdout.write(Buffer([ 0x1b, '\\'.charCodeAt(0) ]));
-        console.log(src);
     });
     return;
 }
