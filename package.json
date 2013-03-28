@@ -2,7 +2,7 @@
   "name": "exterminate",
   "version": "0.5.0",
   "description": "",
-  "browser": "browser.js",
+  "browser": "browser/index.js",
   "bin": {
     "exterminate": "bin/cmd.js",
     "xtshow": "bin/show.js"

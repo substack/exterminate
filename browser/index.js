@@ -1,5 +1,5 @@
 var through = require('through');
-var Terminal = require('./vendor/term.js');
+var Terminal = require('../vendor/term.js');
 var charSize = require('char-size');
 
 module.exports = function (cols, rows, handler) {
