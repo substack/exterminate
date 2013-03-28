@@ -50,7 +50,7 @@ var server = http.createServer(function (req, res) {
         var r = hyperquest(req.url.slice(1));
         r.on('error', function (err) {
             res.statusCode = 500;
-            res.end(err);
+            res.end(String(err));
         });
         r.on('response', function (resp) {
             if (!resp.headers.exterminate) {
@@ -104,7 +104,7 @@ server.on('listening', function () {
     var port = server.address().port;
     
     var bin = 'google-chrome';
-    var args = [ '--app=http://localhost:' + port ];
+    var args = [ '--app=http://localhost:' + port + '/?' + Math.random() ];
     
     if (os.platform() === 'darwin') {
         var userDataDir = path.join(process.env.HOME, '.exterminate')

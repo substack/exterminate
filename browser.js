@@ -9,17 +9,28 @@ module.exports = function (cols, rows, handler) {
     term.on('pm', function (html) {
         var div = document.createElement('div');
         div.innerHTML = html;
-        target.appendChild(div);
+        term.element.appendChild(div);
         div.style.position = 'absolute';
         div.style.left = term.x * size.width;
         div.style.top = term.y * size.height + 2;
-        var s = window.getComputedStyle(div);
-        var h = parseInt(s.height, 10);
+        
+        var iframe = div.querySelector('iframe');
+        if (iframe) {
+            iframe.style.width = window.innerWidth - 10;
+            var onload = function () {
+                var doc = iframe.contentDocument;
+                var style = window.getComputedStyle(doc.body);
+                iframe.style.height = parseInt(style.height, 10) + 5;
+            };
+            iframe.addEventListener('load', onload);
+            onload();
+        }
+        var h = parseInt(200, 10);
         var dy = Math.ceil(h / size.height) + 1;
         term.cursorPos([ term.y + dy, 0 ]);
         
         term.once('erase', function (w) {
-            if (w === 'all') target.removeChild(div);
+            if (w === 'all') term.element.removeChild(div);
         });
     });
     
