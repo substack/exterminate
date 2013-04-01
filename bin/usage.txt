@@ -10,6 +10,10 @@ usage:
       
       --viewer      Broadcast the first connection to all later connections.
       
+      --share       Share a terminal with anybody who connects.
+      
+      --share=N     Limit sharing to the first N connections.
+      
       --app=CMD     Command to launch `google-chrome` as or false to not launch.
 
   exterminate show FILE

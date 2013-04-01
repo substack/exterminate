@@ -57,9 +57,22 @@ var server = http.createServer(function (req, res) {
 server.listen(argv.port || 0, argv.address || '127.0.0.1');
 
 function getShell () {
-    var hasShells = Object.keys(shux.shells).length > 0;
-    if (argv.viewer && viewShell) {
+    var shellCount = Object.keys(shux.shells).length;
+    var hasShells = shellCount > 0;
+    
+    if (argv.share && typeof argv.share === 'number'
+    && shellCount >= argv.share) {
+        var tr = through();
+        process.nextTick(function () {
+            tr.end('shell sharing limit reached');
+        });
+        return tr;
+    }
+    else if (argv.viewer && viewShell) {
         return duplexer(through(), shux.attach(viewShell.id));
+    }
+    else if (argv.share && viewShell) {
+        return shux.attach(viewShell.id);
     }
     else if (!argv.port && hasShells) {
         var tr = through();
@@ -68,7 +81,7 @@ function getShell () {
         });
         return tr;
     }
-    else if (argv.viewer) {
+    else if (argv.viewer || argv.share) {
         viewShell = shux.createShell();
         return viewShell;
     }
