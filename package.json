@@ -1,6 +1,6 @@
 {
   "name": "exterminate",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "",
   "browser": "browser/index.js",
   "bin": {

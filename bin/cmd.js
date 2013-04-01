@@ -94,8 +94,8 @@ function getShell () {
 var sock = shoe(function (stream) {
     var sh = getShell();
     if (ps) {
-        stream.on('end', function () {
-            if (shareCount -- <= 0) {
+        stream.once('end', function () {
+            if (--shareCount <= 0) {
                 ps.kill();
                 setTimeout(function () { process.exit() }, 100);
             }

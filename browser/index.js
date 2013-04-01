@@ -116,8 +116,8 @@ module.exports = function (cols, rows, handler) {
         }
         cursor.style.width = size.width;
         cursor.style.height = size.height;
-        cursor.style.left = term.x * size.width;
-        cursor.style.top = term.y * size.height;
+        cursor.style.left = (term.x * 1.15) + 'ex';
+        cursor.style.top = (term.y * 1.15) + 'em';
     }
     
     return tr;
