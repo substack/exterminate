@@ -56,12 +56,13 @@ var server = http.createServer(function (req, res) {
 });
 server.listen(argv.port || 0, argv.address || '127.0.0.1');
 
+var shareCount = 0;
+
 function getShell () {
-    var shellCount = Object.keys(shux.shells).length;
-    var hasShells = shellCount > 0;
+    var hasShells = Object.keys(shux.shells).length > 0;
     
     if (argv.share && typeof argv.share === 'number'
-    && shellCount >= argv.share) {
+    && shareCount >= argv.share) {
         var tr = through();
         process.nextTick(function () {
             tr.end('shell sharing limit reached');
@@ -72,6 +73,7 @@ function getShell () {
         return duplexer(through(), shux.attach(viewShell.id));
     }
     else if (argv.share && viewShell) {
+        shareCount ++;
         return shux.attach(viewShell.id);
     }
     else if (!argv.port && hasShells) {
@@ -82,6 +84,7 @@ function getShell () {
         return tr;
     }
     else if (argv.viewer || argv.share) {
+        shareCount ++;
         viewShell = shux.createShell();
         return viewShell;
     }
@@ -91,10 +94,11 @@ function getShell () {
 var sock = shoe(function (stream) {
     var sh = getShell();
     if (ps) {
-        stream.on('end', sh.emit.bind(sh, 'end'));
-        sh.on('end', function () {
-            ps.kill();
-            setTimeout(function () { process.exit() }, 100);
+        stream.on('end', function () {
+            if (shareCount -- <= 0) {
+                ps.kill();
+                setTimeout(function () { process.exit() }, 100);
+            }
         });
     }
     stream.pipe(sh).pipe(stream);
