@@ -23,19 +23,15 @@ module.exports = function (cols, rows, handler) {
                 var e = doc.head || doc.documentElement;
                 var styleTag = document.createElement('style');
                 styleTag.appendChild(document.createTextNode(
-                    'body { margin: 0px; color: white }'
+                    'body { margin: 0px; color: white; }'
                 ));
-                if (e.childNodes.length) {
-                    e.insertBefore(styleTag, e.childNodes[0]);
-                }
-                else e.appendChild(styleTag);
+                e.insertBefore(styleTag, e.childNodes[0]);
                 
                 var style = window.getComputedStyle(doc.body);
                 
                 iframe.style.height = parseInt(style.height, 10) + 10;
                 dy = parseInt(iframe.style.height, 10) - dy;
                 term.cursorPos([ term.y + Math.ceil(dy / size.height) + 1, 0 ]);
-                drawCursor();
             };
             iframe.addEventListener('load', onload);
             onload();
@@ -52,7 +48,6 @@ module.exports = function (cols, rows, handler) {
     
     var tr = through(function (buf) {
         term.write(buf);
-        drawCursor();
     });
     term.on('key', function (key) { tr.queue(key) });
     
@@ -104,21 +99,6 @@ module.exports = function (cols, rows, handler) {
             term.keyPress(ev)
         }, true);
     };
-    
-    var cursor = null;
-    function drawCursor () {
-        if (!size) return tr.once('size', drawCursor);
-        if (!cursor) {
-            cursor = document.createElement('div');
-            cursor.style.position = 'absolute';
-            cursor.style['background-color'] = 'rgba(255,255,255,0.5)';
-            term.element.appendChild(cursor);
-        }
-        cursor.style.width = size.width;
-        cursor.style.height = size.height;
-        cursor.style.left = (term.x * 1.15) + 'ex';
-        cursor.style.top = (term.y * 1.15) + 'em';
-    }
     
     return tr;
 };
