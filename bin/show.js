@@ -28,3 +28,23 @@ server.listen(0, function () {
     process.stdout.write('<iframe src="' + src + '">');
     process.stdout.write(Buffer([ 0x1b, '\\'.charCodeAt(0) ]));
 });
+
+function onexit () {
+    process.stdout.write(chars([ 0x1b, '[H', 0x1b, '[2J' ]));
+    process.exit();
+}
+[ 'exit', 'SIGTERM', 'SIGINT', 'SIGHUP' ].forEach(function (ev) {
+    process.on(ev, onexit);
+});
+
+function chars (xs) {
+    return new Buffer(xs.reduce(function (bytes, x) {
+        if (typeof x === 'string') {
+            for (var i = 0; i < x.length; i++) {
+                bytes.push(x.charCodeAt(i));
+            }
+        }
+        else bytes.push(x);
+        return bytes;
+    }, []));
+}
