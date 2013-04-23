@@ -38,7 +38,7 @@ module.exports = function (cols, rows, handler) {
                 var bh = parseInt(style.width);
                 var ba = bw / bh;
                 
-                if (bw > ww || bh > wh) {
+                if (ww && wh && (bw > ww || bh > wh)) {
                     if (wa > ba) { // limiting: height
                         doc.body.style.zoom = wh / bh;
                     }
