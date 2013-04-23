@@ -8,6 +8,7 @@ module.exports = function (cols, rows, handler) {
     
     term.on('pm', function (html) {
         var div = document.createElement('div');
+        div.className = 'container';
         div.innerHTML = html;
         term.element.appendChild(div);
         div.style.position = 'absolute';
@@ -22,14 +23,30 @@ module.exports = function (cols, rows, handler) {
                 var doc = iframe.contentDocument;
                 var e = doc.head || doc.documentElement;
                 var styleTag = document.createElement('style');
+                
                 styleTag.appendChild(document.createTextNode(
                     'body { margin: 0px; color: white; }'
                 ));
                 e.insertBefore(styleTag, e.childNodes[0]);
                 
                 var style = window.getComputedStyle(doc.body);
+                var ww = parseInt(iframe.contentWindow.innerWidth);
+                var wh = parseInt(iframe.contentWindow.innerHeight);
+                var wa = ww / wh;
                 
-                iframe.style.height = parseInt(style.height, 10) + 10;
+                var bw = parseInt(style.height);
+                var bh = parseInt(style.width);
+                var ba = bw / bh;
+                
+                if (bw > ww || bh > wh) {
+                    if (wa > ba) { // limiting: height
+                        doc.body.style.zoom = wh / bh;
+                    }
+                    else { // limiting: width
+                        doc.body.style.zoom = ww / bw;
+                    }
+                }
+                
                 dy = parseInt(iframe.style.height, 10) - dy;
                 term.cursorPos([ term.y + Math.ceil(dy / size.height) + 1, 0 ]);
             };
