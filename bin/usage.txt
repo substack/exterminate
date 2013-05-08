@@ -16,7 +16,7 @@ usage:
       
       --app=CMD     Command to launch `google-chrome` as or false to not launch.
       
-      --command=CMD Command used for the shell by exterminate. Defaults to
+      --shell=CMD   Command used for the shell by exterminate. Defaults to
                     $SHELL and falls back to `bash`.
 
   exterminate show FILE

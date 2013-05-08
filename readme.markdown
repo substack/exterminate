@@ -61,7 +61,14 @@ usage:
       
       --viewer      Broadcast the first connection to all later connections.
       
+      --share       Share a terminal with anybody who connects.
+      
+      --share=N     Limit sharing to the first N connections.
+      
       --app=CMD     Command to launch `google-chrome` as or false to not launch.
+      
+      --shell=CMD   Command used for the shell by exterminate. Defaults to
+                    $SHELL and falls back to `bash`.
 
   exterminate show FILE
   
