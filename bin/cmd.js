@@ -60,6 +60,10 @@ var shareCount = 0;
 
 function getShell () {
     var hasShells = Object.keys(shux.shells).length > 0;
+    var command = typeof argv.command === 'string'
+        ? argv.command
+        : process.env.SHELL || 'bash'
+    ;
     
     if (argv.share && typeof argv.share === 'number'
     && shareCount >= argv.share) {
@@ -85,10 +89,10 @@ function getShell () {
     }
     else if (argv.viewer || argv.share) {
         shareCount ++;
-        viewShell = shux.createShell();
+        viewShell = shux.createShell({ command: command });
         return viewShell;
     }
-    else return shux.createShell();
+    else return shux.createShell({ command: command });
 }
 
 var sock = shoe(function (stream) {
