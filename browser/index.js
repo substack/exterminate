@@ -117,5 +117,7 @@ module.exports = function (cols, rows, handler) {
         }, true);
     };
     
+    tr.terminal = term;
+    
     return tr;
 };
