@@ -4077,10 +4077,6 @@ function isBoldBroken() {
   return w1 !== w2;
 }
 
-var String = this.String;
-var setTimeout = this.setTimeout;
-var setInterval = this.setInterval;
-
 /**
  * Expose
  */
