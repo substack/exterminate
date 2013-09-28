@@ -1,6 +1,6 @@
 {
   "name": "exterminate",
-  "version": "1.3.1",
+  "version": "1.3.2",
   "description": "terminal emulator application like xterm in node and html",
   "browser": "browser/index.js",
   "bin": {
