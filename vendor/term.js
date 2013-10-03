@@ -710,6 +710,7 @@ Terminal.prototype.refresh = function(start, end) {
     i = 0;
 
     for (; i < width; i++) {
+      if (!line[i]) line[i] = [];
       data = line[i][0];
       ch = line[i][1];
 
@@ -784,7 +785,7 @@ Terminal.prototype.refresh = function(start, end) {
       out += '</span>';
     }
 
-    this.children[y].innerHTML = out;
+    if (this.children[y]) this.children[y].innerHTML = out;
   }
 
   if (parent) parent.appendChild(this.element);
@@ -962,6 +963,9 @@ Terminal.prototype.write = function(data) {
                   this.y--;
                   this.scroll();
                 }
+              }
+              if (!this.lines[this.y + this.ybase]) {
+                this.lines[this.y + this.ybase] = [];
               }
               this.lines[this.y + this.ybase][this.x] = [this.curAttr, ch];
               this.x++;
